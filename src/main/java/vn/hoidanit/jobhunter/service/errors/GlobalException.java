@@ -19,6 +19,7 @@ import vn.hoidanit.jobhunter.domain.RestResponse;
 @RestControllerAdvice
 public class GlobalException {
     @ExceptionHandler(value = {
+            IdInvalidException.class,
 
             UsernameNotFoundException.class,
             BadCredentialsException.class
@@ -34,18 +35,17 @@ public class GlobalException {
 
     // resourceNotFound
 
-    // @ExceptionHandler(value = {
-    // NoResourceFoundException.class
-    // })
-    // public ResponseEntity<RestResponse<Object>>
-    // handleResourceNotFoundException(NoResourceFoundException ex) {
+    @ExceptionHandler(value = {
+            NoResourceFoundException.class
+    })
+    public ResponseEntity<RestResponse<Object>> handleResourceNotFoundException(Exception ex) {
 
-    // RestResponse<Object> res = new RestResponse<Object>();
-    // res.setStatusCode(HttpStatus.BAD_REQUEST.value());
-    // res.setMessage("Not found");
-    // res.setError(ex.getMessage());
-    // return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
-    // }
+        RestResponse<Object> res = new RestResponse<Object>();
+        res.setStatusCode(HttpStatus.NOT_FOUND.value());
+        res.setMessage("Not found");
+        res.setError(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<RestResponse<Object>> validationError(MethodArgumentNotValidException ex) {
@@ -65,4 +65,15 @@ public class GlobalException {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
 
+    @ExceptionHandler(value = {
+            StorageException.class
+    })
+    public ResponseEntity<RestResponse<Object>> handleFileUploadException(Exception ex) {
+
+        RestResponse<Object> res = new RestResponse<Object>();
+        res.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        res.setMessage("Exception file upload...");
+        res.setError(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    }
 }
